@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -27,11 +29,17 @@ func main() {
 		return
 	}
 
+	closingConnSuffix := "closing connection\n"
+
 	for {
 		clientReader := bufio.NewReader(os.Stdin)
 		serverReader := bufio.NewReader(conn)
 
 		serverResponse, err := serverReader.ReadString('\n')
+
+		if strings.HasSuffix(serverResponse, closingConnSuffix) {
+			log.Fatalln("The server closed your connection")
+		}
 
 		switch err {
 		case io.EOF:
